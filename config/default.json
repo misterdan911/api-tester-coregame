@@ -1,0 +1,11 @@
+{
+  "db": {
+    "host": "localhost",
+    "user": "root",
+    "password": "",
+    "dbName": "new_coregame"
+  },
+  "backendUrl": "http://localhost/core_games/public",
+  "appAlias": "utenggo",
+  "msisdn": 6281937506111
+}
