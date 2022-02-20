@@ -17,7 +17,7 @@ const getGameId = require('./GetGameId');
 const startGame = require('./StartGame');
 const storePoint = require('./StorePoint');
 
-describe('FakeMsisdnHandling', function () {
+describe('FakeMsisdnHandlingTest', function () {
 
   this.timeout('15s');
 
