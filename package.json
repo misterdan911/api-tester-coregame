@@ -1,10 +1,10 @@
 {
-  "name": "eoffice-api-tester",
+  "name": "api-tester-pantura",
   "version": "0.0.1",
-  "description": "API Tester untuk E-Office MongoDB",
+  "description": "API Tester untuk Pantura",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --recursive --grep 'FakeMsisdnHandlingTest'"
+    "test": "mocha --recursive"
   },
   "author": "MisterDan",
   "license": "ISC",

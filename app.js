@@ -7,3 +7,4 @@
 
 // console.log(apiKey);
 
+// Object.prototype.toString.call(x) === "[object String]"
