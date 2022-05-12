@@ -3,7 +3,7 @@ let chaiHttp = require('chai-http');
 chai.use(chaiHttp);
 
 async function decrypt(encData, method, secretKey) {
-  res = await chai.request('http://localhost/core_game_decrypt')
+  res = await chai.request('http://localhost/decryptor')
     .post(`/decrypt.php`)
     .send({
       encryptedData: encData,
