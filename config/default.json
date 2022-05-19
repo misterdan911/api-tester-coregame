@@ -1,17 +1,11 @@
 {
-  "db1": {
+  "db": {
     "host": "localhost",
     "user": "root",
     "password": "",
-    "dbName": "db_pantura"
+    "dbName": "new_coregame"
   },
-  "db2": {
-    "host": "localhost",
-    "user": "root",
-    "password": "",
-    "dbName": "pantura_quiz"
-  },
-  "backendUrl": "http://localhost/pantura-core/api",
-  "soal_kuota_reg": 10,
-  "soal_kuota_pull": 3
+  "backendUrl": "http://localhost/core_games/public",
+  "appAlias": "utenggo",
+  "msisdn": 6281937506111
 }
