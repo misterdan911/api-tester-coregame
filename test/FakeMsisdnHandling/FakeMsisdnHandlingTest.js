@@ -19,7 +19,7 @@ const storePoint = require('./StorePoint');
 
 describe('FakeMsisdnHandlingTest', function () {
 
-  this.timeout('15s');
+  this.timeout('60s');
 
   beforeEach(async () => {
     // Reset msisdn data
