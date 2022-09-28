@@ -1,4 +1,6 @@
 const config = require('config');
+const appKey = require('../../lib/appKey');
+
 const bent = require('bent');
 
 let chai = require('chai');
@@ -17,33 +19,41 @@ const getGameId = require('./GetGameId');
 const startGame = require('./StartGame');
 const storePoint = require('./StorePoint');
 
-describe('FakeMsisdnHandlingTest', function () {
+const msisdnData = {
+  realMsisdn: 6287802066091,
+  realMsisdnCrc32: 3821989849,
+  fakeMsisdn: 871176010,
+  fakeMsisdnCrc32: 1064585099
+};
+
+const arrRewardAndPoint = [
+  {
+      reward: 'ut_game',
+      point: 10
+  },
+  {
+      reward: 'ut_galaxyzfold3',
+      point: 1
+  }
+];
+
+describe('FakeMsisdnHandlingUlartenggoXlTest', function () {
 
   this.timeout('60s');
 
   beforeEach(async () => {
-    // Reset msisdn data
-    // -----------------------------
-    let data = {
-      realMsisdn: 6281937506111,
-      realMsisdnCrc32: 864692149,
-      fakeMsisdn: 845659416,
-      fakeMsisdnCrc32: 2490898972
-    };
-
-    await resetMsisdn(data);
-    // -----------------------------
+    // Reset msisdn data on all related table
+    await resetMsisdn(msisdnData);
   });
-
 
   it('Fake MSISDN Scenario 1: Start with REG from sms', async function () {
     console.log('-- Testing scenario 1 --');
 
-    // REG from sms
+    // Receiving DR From Messaging
     // -------------------------------------------------------
-    console.log('REG from sms...');
+    console.log('Receiving DR From Messaging...');
     let post = bent(config.backendUrl, 'POST', 'string', 200, 500);
-    let response = await post('/api/v1/dr?' + drParam.push);
+    let response = await post('/api/v1/dr?' + drParam.xl.push);
     assert.equal(response, 'success');
     // -------------------------------------------------------
 
@@ -54,7 +64,7 @@ describe('FakeMsisdnHandlingTest', function () {
     // -------------------------------------------------------
     console.log('Login into Game...');
 
-    theToken = await singleToken.generate();
+    theToken = await singleToken.generate(appKey.utenggo, msisdnData.realMsisdn);
     expect(theToken).to.be.a('String');
 
     res = await getProfile(theToken);
@@ -67,16 +77,16 @@ describe('FakeMsisdnHandlingTest', function () {
 
     // getLifeSession
     // -------------------------------------------------------
-    theToken = await singleToken.generate();
+    theToken = await singleToken.generate(appKey.utenggo, msisdnData.realMsisdn);
     res = await getLifeSession(theToken);
-    assert.equal(res.msisdn, config.msisdn);
+    assert.equal(res.msisdn, msisdnData.realMsisdn);
     // -------------------------------------------------------
 
     let lifeId = res.life_id;
 
     // startGame
     // -------------------------------------------------------
-    theToken = await singleToken.generate();
+    theToken = await singleToken.generate(appKey.utenggo, msisdnData.realMsisdn);
     let gameId = getGameId();
     res = await startGame(theToken, gameId, lifeId);
     assert.equal(res.data.game_id, gameId);
@@ -84,16 +94,16 @@ describe('FakeMsisdnHandlingTest', function () {
 
     // storePoint
     // -------------------------------------------------------
-    theToken = await singleToken.generate();
-    res = await storePoint(theToken, gameId, lifeId);
+    theToken = await singleToken.generate(appKey.utenggo, msisdnData.realMsisdn);
+    res = await storePoint(theToken, gameId, lifeId, arrRewardAndPoint);
     assert.equal(res.error_message, 'success storePoint');
     // -------------------------------------------------------
 
     console.log('Finished playing game...');
-    
+
     // Verified current point and life
     // -------------------------------------
-    theToken = await singleToken.generate();
+    theToken = await singleToken.generate(appKey.utenggo, msisdnData.realMsisdn);
     res = await getProfile(theToken);
     assert.equal(res.life, 2);
     assert.equal(res.point, 11);
@@ -105,12 +115,12 @@ describe('FakeMsisdnHandlingTest', function () {
     // ---------------------------------------------------
     let restLife = res.life;
 
-    for (let i=0; restLife > i; i++ ) {
-      theToken = await singleToken.generate();
+    for (let i = 0; restLife > i; i++) {
+      theToken = await singleToken.generate(appKey.utenggo, msisdnData.realMsisdn);
       res = await getLifeSession(theToken);
       lifeId = res.life_id;
-  
-      theToken = await singleToken.generate();
+
+      theToken = await singleToken.generate(appKey.utenggo, msisdnData.realMsisdn);
       gameId = getGameId();
       await startGame(theToken, gameId, lifeId);
     }
@@ -120,7 +130,7 @@ describe('FakeMsisdnHandlingTest', function () {
 
     // Verified current life
     // -------------------------------------
-    theToken = await singleToken.generate();
+    theToken = await singleToken.generate(appKey.utenggo, msisdnData.realMsisdn);
     res = await getProfile(theToken);
     assert.equal(res.life, 0);
     assert.equal(res.point, 11);
@@ -133,16 +143,16 @@ describe('FakeMsisdnHandlingTest', function () {
     console.log('PULL from sms');
 
     post = bent(config.backendUrl, 'POST', 'string', 200, 500);
-    response = await post('/api/v1/dr?' + drParam.pull);
+    response = await post('/api/v1/dr?' + drParam.xl.pull);
     assert.equal(response, 'success');
     // -------------------------------------------------------
 
     // Verified current life
     // -------------------------------------
-    theToken = await singleToken.generate();
+    theToken = await singleToken.generate(appKey.utenggo, msisdnData.realMsisdn);
     res = await getProfile(theToken);
     assert.equal(res.life, 3);
-    assert.equal(res.point, 21);
+    assert.equal(res.point, 21);  // Dapat tambahan loyalti point setelah msisdn matching dengan fake_msisdn
 
     console.log(`Point: ${res.point}, Life: ${res.life}`);
     // -------------------------------------
@@ -161,7 +171,7 @@ describe('FakeMsisdnHandlingTest', function () {
     // -------------------------------------------------------
     console.log('Login into Game...');
 
-    theToken = await singleToken.generate();
+    theToken = await singleToken.generate(appKey.utenggo, msisdnData.realMsisdn);
     expect(theToken).to.be.a('String');
 
     res = await getProfile(theToken);
@@ -174,16 +184,16 @@ describe('FakeMsisdnHandlingTest', function () {
 
     // getLifeSession
     // -------------------------------------------------------
-    theToken = await singleToken.generate();
+    theToken = await singleToken.generate(appKey.utenggo, msisdnData.realMsisdn);
     res = await getLifeSession(theToken);
-    assert.equal(res.msisdn, config.msisdn);
+    assert.equal(res.msisdn, msisdnData.realMsisdn);
     // -------------------------------------------------------
 
     let lifeId = res.life_id;
 
     // startGame
     // -------------------------------------------------------
-    theToken = await singleToken.generate();
+    theToken = await singleToken.generate(appKey.utenggo, msisdnData.realMsisdn);
     let gameId = getGameId();
     res = await startGame(theToken, gameId, lifeId);
     assert.equal(res.data.game_id, gameId);
@@ -191,16 +201,16 @@ describe('FakeMsisdnHandlingTest', function () {
 
     // storePoint
     // -------------------------------------------------------
-    theToken = await singleToken.generate();
-    res = await storePoint(theToken, gameId, lifeId);
+    theToken = await singleToken.generate(appKey.utenggo, msisdnData.realMsisdn);
+    res = await storePoint(theToken, gameId, lifeId, arrRewardAndPoint);
     assert.equal(res.error_message, 'success storePoint');
     // -------------------------------------------------------
-    
+
     console.log('Finished playing game...');
 
     // Verified current point and life
     // -------------------------------------
-    theToken = await singleToken.generate();
+    theToken = await singleToken.generate(appKey.utenggo, msisdnData.realMsisdn);
     res = await getProfile(theToken);
     assert.equal(res.life, 2);
     assert.equal(res.point, 11);
@@ -210,19 +220,19 @@ describe('FakeMsisdnHandlingTest', function () {
 
     // Abisin Nyawa
     // ---------------------------------------------------
-    theToken = await singleToken.generate();
+    theToken = await singleToken.generate(appKey.utenggo, msisdnData.realMsisdn);
     res = await getLifeSession(theToken);
     lifeId = res.life_id;
 
-    theToken = await singleToken.generate();
+    theToken = await singleToken.generate(appKey.utenggo, msisdnData.realMsisdn);
     gameId = getGameId();
     await startGame(theToken, gameId, lifeId);
 
-    theToken = await singleToken.generate();
+    theToken = await singleToken.generate(appKey.utenggo, msisdnData.realMsisdn);
     res = await getLifeSession(theToken);
     lifeId = res.life_id;
 
-    theToken = await singleToken.generate();
+    theToken = await singleToken.generate(appKey.utenggo, msisdnData.realMsisdn);
     gameId = getGameId();
     await startGame(theToken, gameId, lifeId);
 
@@ -231,7 +241,7 @@ describe('FakeMsisdnHandlingTest', function () {
 
     // Verified current life
     // -------------------------------------
-    theToken = await singleToken.generate();
+    theToken = await singleToken.generate(appKey.utenggo, msisdnData.realMsisdn);
     res = await getProfile(theToken);
     assert.equal(res.life, 0);
     assert.equal(res.point, 11);
@@ -244,13 +254,13 @@ describe('FakeMsisdnHandlingTest', function () {
     console.log('PULL from sms');
 
     post = bent(config.backendUrl, 'POST', 'string', 200, 500);
-    response = await post('/api/v1/dr?' + drParam.pull);
+    response = await post('/api/v1/dr?' + drParam.xl.pull);
     assert.equal(response, 'success');
     // -------------------------------------------------------
 
     // Verified current life
     // -------------------------------------
-    theToken = await singleToken.generate();
+    theToken = await singleToken.generate(appKey.utenggo, msisdnData.realMsisdn);
     res = await getProfile(theToken);
     assert.equal(res.life, 3);
     assert.equal(res.point, 11);
@@ -262,12 +272,12 @@ describe('FakeMsisdnHandlingTest', function () {
     // ---------------------------------------------------
     let restLife = res.life;
 
-    for (let i=0; restLife > i; i++ ) {
-      theToken = await singleToken.generate();
+    for (let i = 0; restLife > i; i++) {
+      theToken = await singleToken.generate(appKey.utenggo, msisdnData.realMsisdn);
       res = await getLifeSession(theToken);
       lifeId = res.life_id;
-  
-      theToken = await singleToken.generate();
+
+      theToken = await singleToken.generate(appKey.utenggo, msisdnData.realMsisdn);
       gameId = getGameId();
       await startGame(theToken, gameId, lifeId);
     }
@@ -277,7 +287,7 @@ describe('FakeMsisdnHandlingTest', function () {
 
     // Verified current life
     // -------------------------------------
-    theToken = await singleToken.generate();
+    theToken = await singleToken.generate(appKey.utenggo, msisdnData.realMsisdn);
     res = await getProfile(theToken);
     assert.equal(res.life, 0);
     assert.equal(res.point, 11);
@@ -291,13 +301,13 @@ describe('FakeMsisdnHandlingTest', function () {
     console.log('REG from sms');
 
     post = bent(config.backendUrl, 'POST', 'string', 200, 500);
-    response = await post('/api/v1/dr?' + drParam.push);
+    response = await post('/api/v1/dr?' + drParam.xl.push);
     assert.equal(response, 'success');
     // -------------------------------------------------------
 
     // Verified current life
     // -------------------------------------
-    theToken = await singleToken.generate();
+    theToken = await singleToken.generate(appKey.utenggo, msisdnData.realMsisdn);
     res = await getProfile(theToken);
     assert.equal(res.life, 3);
     assert.equal(res.point, 21);

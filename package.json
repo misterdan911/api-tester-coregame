@@ -4,7 +4,7 @@
   "description": "API Tester untuk E-Office MongoDB",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --recursive --grep 'FakeMsisdnHandlingTest'"
+    "test": "mocha --recursive --grep 'FakeMsisdnHandlingUlartenggoXlTest'"
   },
   "author": "MisterDan",
   "license": "ISC",
