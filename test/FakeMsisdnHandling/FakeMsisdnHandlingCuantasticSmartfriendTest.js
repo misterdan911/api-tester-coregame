@@ -14,10 +14,17 @@ const resetMsisdn = require('./ResetMsisdn');
 const drParam = require('./DrParam');
 
 const getProfile = require('./GetProfile');
+const gameDetail = require('./GameDetail');
 const getLifeSession = require('./GetLifeSession');
 const getGameId = require('./GetGameId');
 const startGame = require('./StartGame');
 const storePoint = require('./StorePoint');
+
+// Portal API
+const gameProfile = require('./GameProfile');
+const games = require('./Games');
+const gameLeaderboard = require('./GameLeaderboard');
+
 
 const msisdnData = {
   realMsisdn: 62882291246819,
@@ -35,7 +42,7 @@ const arrRewardAndPoint = [
 
 describe('FakeMsisdnHandlingCuantasticSmartfriendTest', function () {
 
-  this.timeout('60s');
+  this.timeout('120s');
 
   beforeEach(async () => {
     // Reset msisdn data on all related table
@@ -58,15 +65,22 @@ describe('FakeMsisdnHandlingCuantasticSmartfriendTest', function () {
 
     // Login into Game
     // -------------------------------------------------------
-    console.log('Login into Game...');
+    console.log('Login into Portal...');
 
     theToken = await singleToken.generate(appKey.cuantastic, msisdnData.realMsisdn);
     expect(theToken).to.be.a('String');
 
-    res = await getProfile(theToken);
-    assert.equal(res.life, 1);
+    res = await gameProfile(theToken);
+    assert.equal(res.msisdn, msisdnData.realMsisdn);
 
-    console.log(`Point: ${res.point}, Life: ${res.life}`);
+    console.log('Hitting gameDetail API..');
+    theToken = await singleToken.generate(appKey.cuantastic, msisdnData.realMsisdn);
+    expect(theToken).to.be.a('String');
+
+    res = await gameDetail(theToken);
+    assert.equal(res.token, 1);
+    assert.equal(res.point, null);
+    console.log(`Point: ${res.point}, Life: ${res.token}`);
     // -------------------------------------------------------
 
     console.log('Start playing game...');
@@ -155,6 +169,44 @@ describe('FakeMsisdnHandlingCuantasticSmartfriendTest', function () {
 
   });
 
+  it('Can run api from login to leaderboard', async function () {
+    console.log('-- It can run all api from login to leaderboard --');
+
+    console.log('Hitting gameProfile API...');
+
+    theToken = await singleToken.generate(appKey.cuantastic, msisdnData.realMsisdn);
+    expect(theToken).to.be.a('String');
+
+    res = await gameProfile(theToken);
+    assert.equal(res.msisdn, msisdnData.realMsisdn);
+
+    console.log('Hitting gameDetail API..');
+    theToken = await singleToken.generate(appKey.cuantastic, msisdnData.realMsisdn);
+    expect(theToken).to.be.a('String');
+
+    res = await gameDetail(theToken);
+    assert.equal(res.token, 1);
+    assert.equal(res.point, null);
+
+    console.log('Hitting games API..');
+    theToken = await singleToken.generate(appKey.cuantastic, msisdnData.realMsisdn);
+    expect(theToken).to.be.a('String');
+
+    res = await games(theToken);
+    expect(res).to.be.an('array')
+
+    console.log('Hitting gameLeaderboard API..');
+    theToken = await singleToken.generate(appKey.cuantastic, msisdnData.realMsisdn);
+    expect(theToken).to.be.a('String');
+
+    res = await gameLeaderboard(theToken);
+    expect(res).to.be.an('array')
+
+
+  });
+
+
+  /*
   it('Fake MSISDN Scenario 2: Start with Playing Game', async function () {
     console.log('-- Testing scenario 2 --');
 
@@ -313,6 +365,7 @@ describe('FakeMsisdnHandlingCuantasticSmartfriendTest', function () {
 
 
   });
+  */
 
 });
 

@@ -43,6 +43,9 @@ async function resetMsisdn(data) {
 
     q = `DELETE FROM player_apps WHERE fake_id = ${realMsisdnCrc32} OR fake_id = ${fakeMsisdnCrc32}`;
     await mysql.query(q);
+
+    q = `DELETE FROM player_inbox WHERE msisdn = ${realMsisdn} OR msisdn = ${fakeMsisdn}`;
+    await mysql.query(q);
 }
 
 module.exports = resetMsisdn;
