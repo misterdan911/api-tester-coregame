@@ -1,0 +1,9 @@
+{
+  "db": {
+    "host": "localhost",
+    "user": "root",
+    "password": "",
+    "dbName": "core_games"
+  },
+  "backendUrl": "http://localhost/core_games/public"
+}

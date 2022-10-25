@@ -21,7 +21,8 @@ async function storePoint(theToken, gameId, tokenId, arrRewardAndPoint) {
     .send(data)
     .catch(err => { throw err; });
 
-  // console.log('XXX RES', config.backendUrl);
+  // console.log('XXX Data', data);
+  // console.log('XXX RES', res.body);
 
   return res.body;
 }

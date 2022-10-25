@@ -15,7 +15,6 @@ async function resetMsisdn(data) {
     await mysql.query(q);
 
     q = `DELETE FROM players WHERE msisdn = ${realMsisdn} OR fake_id = ${realMsisdnCrc32} OR msisdn = ${fakeMsisdn} OR msisdn = ${fakeMsisdnCrc32}`;
-    // console.log(q);
     await mysql.query(q);
 
     q = `DELETE FROM leaderboard WHERE msisdn = ${realMsisdn} OR msisdn = ${fakeMsisdn}`;

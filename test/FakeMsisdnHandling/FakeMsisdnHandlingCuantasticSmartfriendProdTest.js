@@ -34,10 +34,10 @@ const msisdnData = {
 */
 
 const msisdnData = {
-  realMsisdn: 2892884890,
-  realMsisdnCrc32: 3138368731,
-  fakeMsisdn: 4221012837,
-  fakeMsisdnCrc32: 2766565578
+  realMsisdn: 1673917512,
+  realMsisdnCrc32: 3522276225,
+  fakeMsisdn: 3287532181,
+  fakeMsisdnCrc32: 2070502234
 };
 
 const mno_id = 5;
@@ -49,17 +49,16 @@ const arrRewardAndPoint = [
   }
 ];
 
-describe('FakeMsisdnHandlingCuantasticSmartfriendTest', function () {
+describe('FakeMsisdnHandlingCuantasticSmartfriendProdTest', function () {
 
   this.timeout('240s');
 
   beforeEach(async () => {
     // Reset msisdn data on all related table
-    console.log('Resetting msisdn data on all related table...');
-    await resetMsisdn(msisdnData);
+    // console.log('Resetting msisdn data on all related table...');
+    // await resetMsisdn(msisdnData);
   });
 
-  /*
   it('Can run api from first sms push to leaderboard', async function () {
     console.log('-- It can run all api from dr to leaderboard --');
 
@@ -70,6 +69,7 @@ describe('FakeMsisdnHandlingCuantasticSmartfriendTest', function () {
     console.log('Receiving DR From Messaging...');
     let post = bent(config.backendUrl, 'POST', 'string', 200, 500);
     let response = await post('/api/v1/dr?' + drParam.smart.push);
+    console.log(response);
     assert.equal(response, 'success');
     // -------------------------------------------------------
     console.log('Hitting playerInfo API...');
@@ -115,7 +115,6 @@ describe('FakeMsisdnHandlingCuantasticSmartfriendTest', function () {
     expect(res).to.be.an('array')
     // -------------------------------------------------------
   });
-  */
 
   it('Can run all gameplay api', async function () {
     console.log('-- Can run all gameplay api --');
@@ -166,9 +165,6 @@ describe('FakeMsisdnHandlingCuantasticSmartfriendTest', function () {
     res = await startGame(theToken, gameId, lifeId);
     assert.equal(res.data.game_id, gameId);
     // -------------------------------------------------------
-
-    // console.log('xxx game_id', gameId);
-    // console.log('xxx token_id', lifeId);
 
     // storePoint
     // -------------------------------------------------------
